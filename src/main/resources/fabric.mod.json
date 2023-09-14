@@ -18,11 +18,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-        "turniplabs.examplemod.ExampleMod"
+        "milkfrog.runningboots.RunningBoots"
     ]
   },
   "mixins": [
-      "examplemod.mixins.json"
+      "runningboots.mixins.json"
   ],
 
   "depends": {
