@@ -50,16 +50,24 @@ public class WorldTimeMixin {
         return true;
     }
 
+    public void printOut(String message) {
+        System.out.println(message);
+    }
+
     @Inject(at = @At("HEAD"), method = "doTick", remap = false)
     public void countWorldTime(CallbackInfo ci) {
         MinecraftServer server = (MinecraftServer) (Object) this;
         long worldTime = server.getWorldManager(0).getWorldTime();
         setWorldTime(worldTime);
         if (worldTime % 20 == 0) {
-            if (getWorldTime() < getFileTime()) {
+            long fileTime = getFileTime();
+            if (getWorldTime() < fileTime) {
                 // if the world time is less than the time in the file, the server has been restarted
                 // set the world time to the time in the file
-                server.getWorldManager(0).setWorldTime(getFileTime());
+                server.getWorldManager(0).setWorldTime(fileTime);
+                server.getWorldManager(1).setWorldTime(fileTime);
+                server.getWorldManager(2).setWorldTime(fileTime);
+                printOut("Server restarted, setting world time to " + fileTime);
             }
             // update the time in the file
             setFileTime();
