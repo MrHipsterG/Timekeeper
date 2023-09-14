@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "timekeeper",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This mod aims to help new BTA modders.",
+  "name": "TimeKeeper",
+  "description": "A Mod that keeps track of time on servers.",
   "authors": [
-    "Turnip Labs"
+    "MilkFrog"
   ],
   "contact": {
     "homepage": "",
@@ -18,11 +18,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-        "milkfrog.runningboots.RunningBoots"
+        "milkfrog.timekeeper.TimeKeeper"
     ]
   },
   "mixins": [
-      "runningboots.mixins.json"
+    "timekeeper.mixins.json"
   ],
 
   "depends": {

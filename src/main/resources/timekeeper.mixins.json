@@ -1,9 +1,10 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "milkfrog.runningboots.mixin",
+    "package": "milkfrog.timekeeper.mixin",
     "compatibilityLevel": "JAVA_8",
     "server": [
+        "WorldTimeMixin"
     ],
     "injectors": {
         "defaultRequire": 1
