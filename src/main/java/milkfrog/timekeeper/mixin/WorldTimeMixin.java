@@ -14,35 +14,55 @@ import java.io.*;
 // create a mixin for the LevelData class (the class that stores the world time) and inject into the getWorldTime() method
 @Mixin(MinecraftServer.class)
 public class WorldTimeMixin {
-    // create a variable to store the world time
-    @Unique
-    long worldTime = 0;
+    private long worldTime;
+    private File worldTimeFile = new File("logs/worldTime.txt");
+
+    public long getWorldTime() {
+        return worldTime;
+    }
+
+    public void setWorldTime(long worldTime) {
+        this.worldTime = worldTime;
+    }
+    public long getFileTime() {
+        // read the world time file and return the time
+        long fileTime = 0;
+        try {
+            FileReader fileReader = new FileReader(worldTimeFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            fileTime = Long.parseLong(bufferedReader.readLine());
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileTime;
+    }
+    public boolean setFileTime() {
+        try {
+            FileWriter fileWriter = new FileWriter(worldTimeFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.println(worldTime);
+            printWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
     @Inject(at = @At("HEAD"), method = "doTick", remap = false)
     public void countWorldTime(CallbackInfo ci) {
-
-        if (worldTime == 0) {
-            try {
-                File file = new File("logs/worldTime.txt");
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String st;
-                while ((st = br.readLine()) != null) {
-                    worldTime = Long.parseLong(st);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        MinecraftServer server = (MinecraftServer) (Object) this;
+        long worldTime = server.getWorldManager(0).getWorldTime();
+        setWorldTime(worldTime);
+        if (worldTime % 20 == 0) {
+            if (getWorldTime() < getFileTime()) {
+                // if the world time is less than the time in the file, the server has been restarted
+                // set the world time to the time in the file
+                server.getWorldManager(0).setWorldTime(getFileTime());
             }
-        }
-
-        if (worldTime % 200 == 0) {
-            try {
-                FileWriter fileWriter = new FileWriter("logs/worldTime.txt");
-                PrintWriter printWriter = new PrintWriter(fileWriter);
-                printWriter.println(worldTime);
-                printWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // update the time in the file
+            setFileTime();
         }
     }
 }
